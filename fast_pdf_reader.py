@@ -1,8 +1,8 @@
 import os
-from PyPDF2 import PdfReader
 from multiprocessing import Pool
 import fitz  # PyMuPDF
 import time
+
 
 def find_word_in_pdf(args):
     file_path, word = args
@@ -26,6 +26,8 @@ def search_for_flag_in_pdfs(folder_path, word, processes=None):
     with Pool(processes=processes) as pool:
         results = pool.map(find_word_in_pdf, [(file_path, word) for file_path in file_paths])
 
+    total_files_processed = len(file_paths)  # Liczba przetworzonych plików
+
     for result in results:
         if result is not None:
             file_path, outcome = result
@@ -33,12 +35,11 @@ def search_for_flag_in_pdfs(folder_path, word, processes=None):
                 print(f"'{word}' found in {file_path} on page {outcome}")
             else:
                 print(f"{file_path}: {outcome}")
-                
-                
+
+    print(f"Liczba przetworzonych plików: {total_files_processed}")
+
 if __name__ == '__main__':
     start_time = time.time()
     search_for_flag_in_pdfs(r'C:\\Users\\szaba\\Desktop\\PDF_Finder', 'flag')
     elapsed_time = time.time() - start_time
     print(f"Czas wykonania całego skryptu: {elapsed_time} sekund")
-
-    
